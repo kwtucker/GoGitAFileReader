@@ -1,48 +1,21 @@
-package fileReader
+package main
 
 import (
 	"bufio"
 	"fmt"
-	"github.com/deckarep/gosx-notifier"
 	"io/ioutil"
 	"os"
-	"os/exec"
-	"runtime"
 	"strings"
-	"time"
 )
 
+func main() {
+	path := os.Args[1]
+	commit := ReadFile(path)
+	fmt.Println(commit)
+}
+
 // ReadFile reades files and writes
-func ReadFile(filename string, notify bool) []string {
-
-	// Set notification values
-	notifyTitle := "Save Files"
-	notifyMessage := "Forgit Event In 15 seconds"
-
-	var (
-		slice        = []string{}
-		concatSwitch = false
-		temp         string
-	)
-	// Check which OS the user is using then notify them.
-	if notify {
-		switch runtime.GOOS {
-		case "darwin":
-			// osx notification
-			note := gosxnotifier.NewNotification(notifyMessage)
-			note.Title = notifyTitle
-			note.AppIcon = "logo_icon.png"
-			err := note.Push()
-			if err != nil {
-				fmt.Println("Uh oh!")
-			}
-		case "linux":
-			exec.Command("notify-send", "-i", "./logo_icon.png", notifyTitle, notifyMessage, "-u", "critical").Run()
-		}
-
-		// Delay the app from reading and writing for
-		time.Sleep(time.Second * 15)
-	}
+func ReadFile(filename string) []string {
 
 	// opens file with read and write permissions
 	file, err := os.OpenFile(filename, os.O_RDWR, 0666)
@@ -65,6 +38,11 @@ func ReadFile(filename string, notify bool) []string {
 
 	// Setting a scanner buffer layer
 	scanner := bufio.NewScanner(file)
+	var (
+		concatSwitch bool
+		temp         string
+		slice        []string
+	)
 
 	// loop through the file.
 	for scanner.Scan() {
