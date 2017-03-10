@@ -6,12 +6,21 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"strconv"
 )
 
 func main() {
 	path := os.Args[1]
 	commit := ReadFile(path)
-	fmt.Println(commit)
+	// fmt.Println(commit)
+	for i := range commit {
+		fmt.Println(strconv.Itoa(i+1)+".",strings.TrimSpace(commit[i]))
+	}
+	// Read the user input on the comment string they select
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Select strings you want in your commit message example \"1,2,3\": ")
+	text, _ := reader.ReadString('\n')
+	fmt.Println(text)
 }
 
 // ReadFile reades files and writes
